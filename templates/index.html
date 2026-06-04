@@ -25,6 +25,20 @@
 <hr>
 
 <section>
+
+    <form action="/" method="GET" style="display:flex; gap:10px: align-items:center;">
+        <input type="text" name="q" placeholder="Ψάξε με λέξη κλειδή ή κατηγορία" value ="{{search_query}}">
+        <button type="submit" style="width:auto; margin-botton: var(--spacing);" > Αναζήτηση </button>
+        {% if search_query % }
+        <a href="/" role="button" class="secondary" style="margin-bottom: var(--spacing);"> Καθαρισμός </a>
+        {% endif %}
+    </form>
+    {% if search_query %}
+    <p><small> Αποτελέσματα για : <em> "{{search_query}}"</em></small> </p>
+
+    {% endif %}
+
+<section>
     <h2>Πρόσφατες Ερωτήσεις</h2>
     {% if posts %}
         {% for post in posts %}
