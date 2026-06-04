@@ -42,9 +42,19 @@ init_db()
 
 @app.route('/')
 def index():
-    """Η αρχική σελίδα που δείχνει τη φόρμα δημιουργίας και όλες τις ερωτήσεις."""
+
+    search_query=requests.args.get('q','').strip()
     conn = get_db_connection()
-    posts = conn.execute('SELECT * FROM posts ORDER BY created_at DESC').fetchall()
+
+if search_query:
+    query = '''
+        SELECT * FROM posts
+        WHERE title LIKE ? OR content LIKE? or category LIKE ?
+        ORDER BY created_at DESC
+    '''
+        posts=conn.execute(query, (f'%{search_query}',f'%{search_query}',f'%{search_query}')).fetchall()
+    else:
+        posts = conn.execute('SELECT * FROM posts ORDER BY created_at DESC').fetchall()
     conn.close()
     return render_template('index.html', posts=posts)
 
