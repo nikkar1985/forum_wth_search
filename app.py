@@ -42,21 +42,22 @@ init_db()
 
 @app.route('/')
 def index():
-
-    search_query=requests.args.get('q','').strip()
+    search_query = request.args.get('q', '').strip()
     conn = get_db_connection()
-
-if search_query:
-    query = '''
-        SELECT * FROM posts
-        WHERE title LIKE ? OR content LIKE? or category LIKE ?
-        ORDER BY created_at DESC
-    '''
-        posts=conn.execute(query, (f'%{search_query}',f'%{search_query}',f'%{search_query}')).fetchall()
+    
+    if search_query:
+        # Ψάχνει αν η λέξη υπάρχει στον τίτλο, στο περιεχόμενο Ή στην κατηγορία
+        query = '''
+            SELECT * FROM posts 
+            WHERE title LIKE ? OR content LIKE ? OR category LIKE ? 
+            ORDER BY created_at DESC
+        '''
+        posts = conn.execute(query, (f'%{search_query}%', f'%{search_query}%', f'%{search_query}%')).fetchall()
     else:
         posts = conn.execute('SELECT * FROM posts ORDER BY created_at DESC').fetchall()
+        
     conn.close()
-    return render_template('index.html', posts=posts)
+    return render_template('index.html', posts=posts, search_query=search_query)
 
 @app.route('/create', methods=['POST'])
 def create_post():
